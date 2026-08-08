@@ -1,0 +1,26 @@
+# Private game data and scratch output
+/ROM/
+/work/
+/tools/tail_assets/*.bone
+/tools/tail_assets/*.mesh
+
+# Plugin build output
+bin/
+out/
+.vs/
+.vscode/
+CMakeUserPresets.json
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+
+# Agent-local and workflow state
+/AGENTS.md
+/CLAUDE.md
+.claude/
+.agents/
+docs/ai_agents/local/

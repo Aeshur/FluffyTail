@@ -1,0 +1,86 @@
+{
+  "evev": {
+    "bone_sha1_prefix": "c40afb4d",
+    "bone_len": 32864,
+    "mesh_sha1_prefix": "eeb1f88f",
+    "mesh_len": 14688,
+    "samples": 1
+  },
+  "mit_": {
+    "bone_sha1_prefix": "6df366aa",
+    "bone_len": 32864,
+    "mesh_sha1_prefix": "eeb1f88f",
+    "mesh_len": 14688,
+    "samples": 5
+  },
+  "ms_b": {
+    "bone_sha1_prefix": "ddfbd56b",
+    "bone_len": 32864,
+    "mesh_sha1_prefix": "eeb1f88f",
+    "mesh_len": 14688,
+    "samples": 2
+  },
+  "mt3_": {
+    "bone_sha1_prefix": "5e1ba5de",
+    "bone_len": 32864,
+    "mesh_sha1_prefix": "eeb1f88f",
+    "mesh_len": 14688,
+    "samples": 2
+  },
+  "mt_3": {
+    "bone_sha1_prefix": "ca177c45",
+    "bone_len": 32864,
+    "mesh_sha1_prefix": "2f9c47ca",
+    "mesh_len": 14688,
+    "samples": 1
+  },
+  "mt_b": {
+    "bone_sha1_prefix": "20223ae7",
+    "bone_len": 32864,
+    "mesh_sha1_prefix": "eeb1f88f",
+    "mesh_len": 14688,
+    "samples": 103
+  },
+  "mt_c": {
+    "bone_sha1_prefix": "09b7f937",
+    "bone_len": 32864,
+    "mesh_sha1_prefix": "4432b6a2",
+    "mesh_len": 14688,
+    "samples": 8
+  },
+  "mt_e": {
+    "bone_sha1_prefix": "7e569f4a",
+    "bone_len": 32864,
+    "mesh_sha1_prefix": "4432b6a2",
+    "mesh_len": 14688,
+    "samples": 2
+  },
+  "mt_g": {
+    "bone_sha1_prefix": "7aae0407",
+    "bone_len": 32864,
+    "mesh_sha1_prefix": "eeb1f88f",
+    "mesh_len": 14688,
+    "samples": 2
+  },
+  "mt_m": {
+    "bone_sha1_prefix": "6c96d10d",
+    "bone_len": 32864,
+    "mesh_sha1_prefix": "eeb1f88f",
+    "mesh_len": 14688,
+    "samples": 5
+  },
+  "mt_u": {
+    "bone_sha1_prefix": "bf655697",
+    "bone_len": 32864,
+    "mesh_sha1_prefix": "eeb1f88f",
+    "mesh_len": 14688,
+    "samples": 1
+  },
+  "mt_y": {
+    "bone_sha1_prefix": "dab9fd01",
+    "bone_len": 32864,
+    "mesh_sha1_prefix": "eeb1f88f",
+    "mesh_len": 14688,
+    "samples": 1
+  }
+}

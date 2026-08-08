@@ -1,0 +1,58 @@
+name: Quality
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  documentation:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v6.2.0
+        with:
+          python-version: "3.12"
+      - name: Check repository text and configuration
+        run: |
+          python tools/check_repository.py
+          cmake --list-presets
+          git diff-tree --check --root --no-commit-id -r HEAD -- . ":(exclude)LICENSE.GPL.txt" ":(exclude)LICENSE.md"
+      - uses: DavidAnson/markdownlint-cli2-action@v23.2.0
+
+  python:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6.0.2
+      - uses: actions/setup-python@v6.2.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install quality tools
+        run: python -m pip install pytest==9.1.1 ruff==0.15.22
+      - name: Check Python
+        run: |
+          ruff check
+          ruff format --check
+          pytest
+          python -m compileall -q tools
+
+  cpp-style:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6.0.2
+      - uses: actions/setup-python@v6.2.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install clang-format
+        run: python -m pip install clang-format==22.1.8
+      - name: Check C++ formatting
+        run: clang-format --dry-run --Werror src/defines.hpp src/fluffytail.cpp src/fluffytail.hpp
+
+  # The DLL build requires the separately distributed Ashita v4 SDK. No verified,
+  # license-compatible runner source is available, so CI does not claim a build.

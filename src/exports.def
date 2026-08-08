@@ -1,0 +1,9 @@
+LIBRARY "fluffytail"
+EXPORTS
+
+; Ashita v4 plugin ABI exports. Names and ordinals are part of the host contract.
+
+    expCreatePlugin             @1
+
+    expDestroyPlugin            @2
+    expGetInterfaceVersion      @3

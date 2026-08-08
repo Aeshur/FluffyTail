@@ -1,0 +1,17 @@
+# Bodies excluded from the FluffyTail overlay.
+# Costumes and special models where a Mithra tail does not belong, or where the
+# costume hides the original tail and a fluffy tail would poke through. Curated by
+# observing the models in game. They contain tail bones, so automatic no-tail detection
+# does not exclude them.
+ROM/304/53.DAT
+ROM/286/47.DAT
+ROM/310/98.DAT
+ROM/314/21.DAT
+ROM/314/22.DAT
+ROM/321/107.DAT
+ROM/331/0.DAT
+ROM/344/69.DAT
+ROM/347/35.DAT
+ROM/353/51.DAT
+ROM/365/43.DAT
+ROM/379/98.DAT
