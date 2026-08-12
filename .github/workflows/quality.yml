@@ -1,39 +1,59 @@
-name: Quality
+name: Checks
 
 on:
-  push:
+  workflow_dispatch:
   pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
-  documentation:
+  repository:
+    name: Repository Checks
     runs-on: windows-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6.0.2
-        with:
-          fetch-depth: 2
-      - uses: actions/setup-python@v6.2.0
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
-      - name: Check repository text and configuration
+
+      - name: Run repository checks
         run: |
           python tools/check_repository.py
           cmake --list-presets
           git diff-tree --check --root --no-commit-id -r HEAD -- . ":(exclude)LICENSE.GPL.txt" ":(exclude)LICENSE.md"
-      - uses: DavidAnson/markdownlint-cli2-action@v23.2.0
+
+      - name: Check Markdown
+        uses: DavidAnson/markdownlint-cli2-action@ded1f9488f68a970bc66ea5619e13e9b52e601cd # v23.2.0
 
   python:
+    name: Python Checks
     runs-on: windows-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6.0.2
-      - uses: actions/setup-python@v6.2.0
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
           cache: pip
+
       - name: Install quality tools
         run: python -m pip install pytest==9.1.1 ruff==0.15.22
+
       - name: Check Python
         run: |
           ruff check
@@ -41,18 +61,30 @@ jobs:
           pytest
           python -m compileall -q tools
 
-  cpp-style:
+  clang-format:
+    name: Clang Format
     runs-on: windows-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6.0.2
-      - uses: actions/setup-python@v6.2.0
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
           cache: pip
-      - name: Install clang-format
+
+      - name: Install Clang Format
         run: python -m pip install clang-format==22.1.8
+
       - name: Check C++ formatting
-        run: clang-format --dry-run --Werror src/defines.hpp src/fluffytail.cpp src/fluffytail.hpp
+        run: |
+          $files = @(git ls-files -- '*.c' '*.cc' '*.cpp' '*.cxx' '*.h' '*.hh' '*.hpp' '*.hxx')
+          if ($files.Count -eq 0) {
+              throw 'No tracked C++ files found.'
+          }
+          clang-format --dry-run --Werror $files
 
   # The DLL build requires the separately distributed Ashita v4 SDK. No verified,
   # license-compatible runner source is available, so CI does not claim a build.
