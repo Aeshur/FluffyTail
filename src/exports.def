@@ -4,6 +4,10 @@ EXPORTS
 ; Ashita v4 plugin ABI exports. Names and ordinals are part of the host contract.
 
     expCreatePlugin             @1
-
     expDestroyPlugin            @2
     expGetInterfaceVersion      @3
+
+; Windower 4.7.9 native plugin ABI exports. These use C linkage and cdecl.
+
+    CreateInstance
+    GetInterfaceVersion

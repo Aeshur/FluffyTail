@@ -59,6 +59,7 @@ jobs:
           ruff check
           ruff format --check
           pytest
+          python tools/verify_windower_abi.py
           python -m compileall -q tools
 
   clang-format:

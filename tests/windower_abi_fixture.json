@@ -1,0 +1,101 @@
+{
+  "schema": 1,
+  "retrieved_utc": "2026-08-13",
+  "manifest": {
+    "url": "https://files.windower.net/4/live/manifest.xml",
+    "sha256": "D69392F6601DF5B504E1640CF8CF88AB09CEF693D550C773448BB8D46D4D6FCA",
+    "hook_version": "4.7.9.0",
+    "config_version": "2.0.1.13"
+  },
+  "artifacts": {
+    "hook": {
+      "url": "https://files.windower.net/4/live/Hook.dll",
+      "sha256": "6EEDEC7B7602324B8187158738E9EDBCE44DD3F6EEAD67E21CFC7F2DC833530D"
+    },
+    "config": {
+      "url": "https://files.windower.net/4/live/plugins/Config.dll",
+      "sha256": "863506E00F79AE2398A9FA295736EC56C2C07E9B1E518D3A763C2B96D4C18109"
+    }
+  },
+  "interface_version": {
+    "artifact": "config",
+    "function_rva": "0x0004B7A0",
+    "bytes": "B800030704C3",
+    "value": "0x04070300"
+  },
+  "console": {
+    "artifact": "hook",
+    "rtti_name": ".?AVConsole@@",
+    "vtable_rva": "0x00182A0C",
+    "slots": [
+      {"name": "OpenConsole", "function_rva": "0x00046730", "return_rva": "0x00046758", "stack_bytes": 8},
+      {"name": "IsVisible", "function_rva": "0x00046760", "return_rva": "0x0004676D", "stack_bytes": 4},
+      {"name": "SetPosition", "function_rva": "0x000401B0", "return_rva": "0x000401E9", "stack_bytes": 12},
+      {"name": "Write", "function_rva": "0x0003ECA0", "return_rva": "0x0003ED4E", "stack_bytes": 8},
+      {"name": "Clear", "function_rva": "0x0003FA60", "return_rva": "0x0003FB92", "stack_bytes": 4},
+      {"name": "SendCommand", "function_rva": "0x00042000", "return_rva": "0x000420AF", "stack_bytes": 12}
+    ]
+  },
+  "plugin_manager": {
+    "artifact": "hook",
+    "rtti_name": ".?AVPluginManager@@",
+    "vtable_rva": "0x00183BDC",
+    "slots": [
+      {"name": "GetMMFSettingsHandler", "function_rva": "0x00072DA0", "return_rva": "0x00072DA8", "stack_bytes": 4},
+      {"name": "GetHWND", "function_rva": "0x00072D90", "return_rva": "0x00072D98", "stack_bytes": 4},
+      {"name": "GetDirect3D8Device", "function_rva": "0x00072DB0", "return_rva": "0x00072DBD", "stack_bytes": 4},
+      {"name": "GetConsole", "function_rva": "0x00072DC0", "return_rva": "0x00072DC8", "stack_bytes": 4},
+      {"name": "GetTextHandler", "function_rva": "0x00072DD0", "return_rva": "0x00072DDB", "stack_bytes": 4},
+      {"name": "GetPrimitiveHandler", "function_rva": "0x00072DE0", "return_rva": "0x00072DEB", "stack_bytes": 4},
+      {"name": "GetPacketStreamHandler", "function_rva": "0x00072DF0", "return_rva": "0x00072DFA", "stack_bytes": 4},
+      {"name": "GetFFXI", "function_rva": "0x00072E00", "return_rva": "0x00072E4E", "stack_bytes": 4},
+      {"name": "Dtor", "function_rva": "0x0006ED80", "return_rva": "0x0006EE06", "stack_bytes": 4}
+    ]
+  },
+  "plugin_base": {
+    "artifact": "config",
+    "rtti_name": ".?AVWindowerPlugin@@",
+    "rtti_bases": [".?AVWindowerPlugin@@", ".?AUIPlugin@@"],
+    "vtable_rva": "0x00082C84",
+    "host_slot_count": 18,
+    "concrete_slot_count": 34,
+    "slots": [
+      {"name": "GetPluginAuthor", "function_rva": "0x0004D270", "return_rva": "0x0004D27A", "stack_bytes": 4},
+      {"name": "GetPluginName", "function_rva": "0x0004D260", "return_rva": "0x0004D26A", "stack_bytes": 4},
+      {"name": "Load", "function_rva": "0x0004D150", "return_rva": "0x0004D245", "stack_bytes": 8},
+      {"name": "Dealloc", "function_rva": "0x0004D130", "return_rva": "0x0004D14D", "stack_bytes": 4},
+      {"name": "IgnoreUnload", "function_rva": "0x0004D120", "return_rva": "0x0004D12B", "stack_bytes": 4},
+      {"name": "PreRender", "function_rva": "0x0004D110", "return_rva": "0x0004D119", "stack_bytes": 4},
+      {"name": "PostRender", "function_rva": "0x0004D100", "return_rva": "0x0004D109", "stack_bytes": 4},
+      {"name": "PluginCommand", "function_rva": "0x0004D0E0", "return_rva": "0x0004D0FD", "stack_bytes": 8},
+      {"name": "UnhandledCommand", "function_rva": "0x0004D0C0", "return_rva": "0x0004D0CF", "stack_bytes": 8},
+      {"name": "IncomingText", "function_rva": "0x0004D0A0", "return_rva": "0x0004D0B5", "stack_bytes": 16},
+      {"name": "OutgoingText", "function_rva": "0x0004D080", "return_rva": "0x0004D095", "stack_bytes": 16},
+      {"name": "IncomingChunk", "function_rva": "0x0004CE70", "return_rva": "0x0004D065", "stack_bytes": 20},
+      {"name": "OutgoingChunk", "function_rva": "0x0004CE40", "return_rva": "0x0004CE5F", "stack_bytes": 20},
+      {"name": "Mouse", "function_rva": "0x0004CE10", "return_rva": "0x0004CE33", "stack_bytes": 24},
+      {"name": "Keyboard", "function_rva": "0x0004CDF0", "return_rva": "0x0004CE0B", "stack_bytes": 16},
+      {"name": "AddItem", "function_rva": "0x0004CDD0", "return_rva": "0x0004CDE9", "stack_bytes": 20},
+      {"name": "RemoveItem", "function_rva": "0x0004CDB0", "return_rva": "0x0004CDCC", "stack_bytes": 20},
+      {"name": "Dtor", "function_rva": "0x00020400", "return_rva": "0x00020420", "stack_bytes": 4}
+    ],
+    "helper_slots": [
+      {"name": "WindowerPluginHelper18", "function_rva": "0x0004BFD0", "return_rva": "0x0004BFD0", "return_bytes": "C20400"},
+      {"name": "WindowerPluginHelper19", "function_rva": "0x0004C1B0", "return_rva": "0x0004C1B0", "return_bytes": "C20000"},
+      {"name": "WindowerPluginHelper20", "function_rva": "0x0004C1A0", "return_rva": "0x0004C1A2", "return_bytes": "C3"},
+      {"name": "WindowerPluginHelper21", "function_rva": "0x0004C190", "return_rva": "0x0004C190", "return_bytes": "C20000"},
+      {"name": "WindowerPluginHelper22", "function_rva": "0x0004BFC0", "return_rva": "0x0004BFC0", "return_bytes": "C20000"},
+      {"name": "WindowerPluginHelper23", "function_rva": "0x0004BFB0", "return_rva": "0x0004BFB0", "return_bytes": "C20400"},
+      {"name": "WindowerPluginHelper24", "function_rva": "0x0004C180", "return_rva": "0x0004C182", "return_bytes": "C20400"},
+      {"name": "WindowerPluginHelper25", "function_rva": "0x0004C170", "return_rva": "0x0004C170", "return_bytes": "C20C00"},
+      {"name": "WindowerPluginHelper26", "function_rva": "0x0004C160", "return_rva": "0x0004C160", "return_bytes": "C20C00"},
+      {"name": "WindowerPluginHelper27", "function_rva": "0x0004C150", "return_rva": "0x0004C154", "return_bytes": "C21000"},
+      {"name": "WindowerPluginHelper28", "function_rva": "0x0004C140", "return_rva": "0x0004C144", "return_bytes": "C21000"},
+      {"name": "WindowerPluginHelper29", "function_rva": "0x0004C130", "return_rva": "0x0004C132", "return_bytes": "C21400"},
+      {"name": "WindowerPluginHelper30", "function_rva": "0x0004C120", "return_rva": "0x0004C122", "return_bytes": "C20C00"},
+      {"name": "WindowerPluginHelper31", "function_rva": "0x0004C110", "return_rva": "0x0004C110", "return_bytes": "C21000"},
+      {"name": "WindowerPluginHelper32", "function_rva": "0x0004C100", "return_rva": "0x0004C100", "return_bytes": "C21000"},
+      {"name": "WindowerPluginHelper33", "function_rva": "0x0004BFA0", "return_rva": "0x0004BFA0", "return_bytes": "C20000"}
+    ]
+  }
+}
