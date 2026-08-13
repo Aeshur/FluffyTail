@@ -1,10 +1,20 @@
 from __future__ import annotations
 
+import json
+import re
 import struct
-from pathlib import Path
+import zipfile
+from pathlib import Path, PurePosixPath
 
 import pytest
-from tools import build_colorset, build_runtime_overlay, colorize_tail, dat_chunks, splice_tail
+from tools import (
+    build_colorset,
+    build_packages,
+    build_runtime_overlay,
+    colorize_tail,
+    dat_chunks,
+    splice_tail,
+)
 
 
 def make_chunk(tag: bytes, chunk_type: int, payload: bytes = b"") -> bytes:
@@ -118,7 +128,7 @@ def test_palette_and_fixed_model_tables_preserve_calibrated_values() -> None:
 
 
 def test_cpp_face_map_preserves_all_sixteen_hair_values() -> None:
-    source = (Path(__file__).parents[1] / "src" / "fluffytail.cpp").read_text(encoding="ascii")
+    source = (Path(__file__).parents[1] / "src" / "tail_policy.hpp").read_text(encoding="ascii")
     table = source.split("FACE_COLOURS[16] = {", 1)[1].split("};", 1)[0]
     values = [value.strip().strip('"') for value in table.split(",") if value.strip()]
     assert values == [
@@ -138,6 +148,178 @@ def test_cpp_face_map_preserves_all_sixteen_hair_values() -> None:
         "brunette",
         "brunette",
         "blonde",
+    ]
+
+
+def make_test_dll() -> bytes:
+    """Build the smallest PE32 DLL header accepted by the package validator."""
+
+    data = bytearray(0x200)
+    data[:2] = b"MZ"
+    struct.pack_into("<I", data, 0x3C, 0x40)
+    data[0x40:0x44] = b"PE\x00\x00"
+    struct.pack_into("<HHIIIHH", data, 0x44, 0x014C, 1, 0, 0, 0, 0xE0, 0x2000)
+    struct.pack_into("<H", data, 0x58, 0x010B)
+    return bytes(data)
+
+
+def make_test_overlay(root: Path) -> Path:
+    overlay = root / "overlay"
+    rom = overlay / "ROM"
+    for index in range(build_packages.EXPECTED_DAT_COUNT):
+        folder = rom / str(index // 100)
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / f"{index}.DAT").write_bytes(make_dat(make_chunk(b"info", 5)))
+    return overlay
+
+
+def test_package_builder_is_deterministic_and_host_specific(tmp_path: Path) -> None:
+    dll = tmp_path / "fluffytail.dll"
+    dll.write_bytes(make_test_dll())
+    overlay = make_test_overlay(tmp_path)
+
+    first = build_packages.build_packages(dll, overlay, tmp_path / "first")
+    second = build_packages.build_packages(dll, overlay, tmp_path / "second")
+    assert [result.file_count for result in first] == [413, 413]
+    assert [result.path.name for result in first] == ["fluffytail.zip", "fluffytail-windower.zip"]
+    assert [result.path.read_bytes() for result in first] == [
+        result.path.read_bytes() for result in second
+    ]
+
+    expected_prefixes = {
+        "ashita": "polplugins/DATs/FluffyTail/ROM/",
+        "windower": "addons/XIPivot/data/DATs/FluffyTail/ROM/",
+    }
+    for result in first:
+        with zipfile.ZipFile(result.path) as archive:
+            names = archive.namelist()
+            assert sum(name.endswith(".DAT") for name in names) == 408
+            assert any(name.startswith(expected_prefixes[result.host]) for name in names)
+            assert {
+                "FluffyTail/README.md",
+                "FluffyTail/LICENSES.md",
+                "FluffyTail/LICENSE.GPL.txt",
+                "FluffyTail/LICENSE.md",
+            }.issubset(names)
+            root = Path(__file__).parents[1]
+            for document in build_packages.PACKAGE_DOCUMENTS:
+                assert archive.read(f"FluffyTail/{document}") == (root / document).read_bytes()
+            assert "pivot.ini" not in names
+            assert all(
+                info.date_time == build_packages.ZIP_TIMESTAMP for info in archive.infolist()
+            )
+
+
+def test_package_builder_rejects_unsafe_or_duplicate_archive_paths() -> None:
+    with pytest.raises(ValueError, match="escapes package root"):
+        build_packages.validate_archive_entries([(Path("../escape"), b"")])
+    with pytest.raises(ValueError, match="duplicate archive path"):
+        build_packages.validate_archive_entries(
+            [(Path("FluffyTail/README.md"), b"a"), (Path("fluffytail/readme.md"), b"b")]
+        )
+    with pytest.raises(ValueError, match="unsafe character"):
+        build_packages.validate_archive_entries([(PurePosixPath("C:/escape"), b"")])
+
+
+def test_exports_def_preserves_both_host_contracts() -> None:
+    source = (Path(__file__).parents[1] / "src" / "exports.def").read_text(encoding="ascii")
+    assert "expCreatePlugin             @1" in source
+    assert "expDestroyPlugin            @2" in source
+    assert "expGetInterfaceVersion      @3" in source
+    assert "    CreateInstance\n" in source
+    assert "    GetInterfaceVersion\n" in source
+
+
+def test_windower_source_contract_preserves_abi_slots() -> None:
+    root = Path(__file__).parents[1]
+    header = (root / "src" / "windower.hpp").read_text(encoding="ascii")
+    implementation = (root / "src" / "windower.cpp").read_text(encoding="ascii")
+    assert "INTERFACE_VERSION = 0x04070300" in header
+    compact_header = " ".join(header.split())
+    assert "virtual auto __stdcall GetMMFSettingsHandler() -> Settings* = 0;" in compact_header
+    assert "constexpr size_t RESET_VTABLE_INDEX = 14;" in implementation
+    assert "constexpr size_t DRAW_VTABLE_INDEX  = 71;" in implementation
+
+    def virtual_names(class_name: str) -> list[str]:
+        body = header.split(f"class {class_name}", 1)[1].split("};", 1)[0]
+        return re.findall(r"virtual\s+(?:auto|void)\s+(?:__stdcall|__thiscall)\s+(\w+)\s*\(", body)
+
+    manager_names = [
+        "GetMMFSettingsHandler",
+        "GetHWND",
+        "GetDirect3D8Device",
+        "GetConsole",
+        "GetTextHandler",
+        "GetPrimitiveHandler",
+        "GetPacketStreamHandler",
+        "GetFFXI",
+        "Dtor",
+    ]
+    plugin_names = [
+        "GetPluginAuthor",
+        "GetPluginName",
+        "Load",
+        "Dealloc",
+        "IgnoreUnload",
+        "PreRender",
+        "PostRender",
+        "PluginCommand",
+        "UnhandledCommand",
+        "IncomingText",
+        "OutgoingText",
+        "IncomingChunk",
+        "OutgoingChunk",
+        "Mouse",
+        "Keyboard",
+        "AddItem",
+        "RemoveItem",
+        "Dtor",
+    ]
+    console_names = [
+        "OpenConsole",
+        "IsVisible",
+        "SetPosition",
+        "Write",
+        "Clear",
+        "SendCommand",
+    ]
+    assert virtual_names("Console") == console_names
+    assert virtual_names("PluginManager") == manager_names
+    assert virtual_names("PluginBase") == plugin_names
+
+    fixture = json.loads((root / "tests" / "windower_abi_fixture.json").read_text(encoding="ascii"))
+    assert fixture["interface_version"]["value"] == "0x04070300"
+    assert [slot["name"] for slot in fixture["console"]["slots"]] == console_names
+    assert [slot["stack_bytes"] for slot in fixture["console"]["slots"]] == [8, 4, 12, 8, 4, 12]
+    assert [slot["name"] for slot in fixture["plugin_manager"]["slots"]] == manager_names
+    assert [slot["stack_bytes"] for slot in fixture["plugin_manager"]["slots"]] == [4] * 9
+    assert fixture["plugin_base"]["rtti_bases"] == [
+        ".?AVWindowerPlugin@@",
+        ".?AUIPlugin@@",
+    ]
+    assert fixture["plugin_base"]["host_slot_count"] == 18
+    assert fixture["plugin_base"]["concrete_slot_count"] == 34
+    assert [slot["name"] for slot in fixture["plugin_base"]["slots"]] == plugin_names
+    assert len(fixture["plugin_base"]["helper_slots"]) == 16
+    assert [slot["stack_bytes"] for slot in fixture["plugin_base"]["slots"]] == [
+        4,
+        4,
+        8,
+        4,
+        4,
+        4,
+        4,
+        8,
+        8,
+        16,
+        16,
+        20,
+        20,
+        24,
+        16,
+        20,
+        20,
+        4,
     ]
 
 
