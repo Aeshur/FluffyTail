@@ -181,7 +181,10 @@ def test_package_builder_is_deterministic_and_host_specific(tmp_path: Path) -> N
     first = build_packages.build_packages(dll, overlay, tmp_path / "first")
     second = build_packages.build_packages(dll, overlay, tmp_path / "second")
     assert [result.file_count for result in first] == [413, 413]
-    assert [result.path.name for result in first] == ["fluffytail.zip", "fluffytail-windower.zip"]
+    assert [result.path.name for result in first] == [
+        "fluffytail-ashita.zip",
+        "fluffytail-windower.zip",
+    ]
     assert [result.path.read_bytes() for result in first] == [
         result.path.read_bytes() for result in second
     ]

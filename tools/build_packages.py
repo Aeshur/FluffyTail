@@ -26,7 +26,7 @@ PACKAGE_DOCUMENTS = ("README.md", "LICENSES.md", "LICENSE.GPL.txt", "LICENSE.md"
 DOCUMENT_PREFIX = PurePosixPath("FluffyTail")
 ARCHIVES = {
     "ashita": (
-        "fluffytail.zip",
+        "fluffytail-ashita.zip",
         PurePosixPath("polplugins/DATs/FluffyTail/ROM"),
     ),
     "windower": (

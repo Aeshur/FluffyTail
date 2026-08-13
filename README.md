@@ -15,7 +15,7 @@ colours are stored in the DATs. Player colours are selected while rendering.
 Requires [Ashita 4](https://github.com/AshitaXI/Ashita-v4beta) and its XiPivot
 `pivot` polplugin.
 
-1. Extract `fluffytail.zip` into the Ashita directory.
+1. Extract `fluffytail-ashita.zip` into the Ashita directory.
 2. Add `FluffyTail` to `[overlays]` in `Ashita/config/pivot/pivot.ini` and enable
    `pivot` in the active boot profile.
 3. Run `/load fluffytail`.
