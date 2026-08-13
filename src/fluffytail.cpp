@@ -79,7 +79,7 @@ auto ashita_plugin::GetLink() const -> const char*
 
 auto ashita_plugin::GetVersion() const -> double
 {
-    return 1.0;
+    return 1.1;
 }
 
 auto ashita_plugin::GetPriority() const -> int32_t
